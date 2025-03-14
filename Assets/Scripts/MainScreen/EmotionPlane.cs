@@ -31,7 +31,7 @@ namespace MainScreen
             EmotionData = data ?? throw new ArgumentNullException(nameof(data));
 
             _dailyTypeText.text = EmotionData.EmotionType.ToString();
-            _streakText.text = streak.ToString();
+            _streakText.text = streak + " Day Streak";
         }
 
         private void OnButtonClicked()

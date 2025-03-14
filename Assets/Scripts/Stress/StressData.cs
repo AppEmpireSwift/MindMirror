@@ -8,11 +8,17 @@ namespace Stress
     {
         public StressType StressType;
         public int Number;
+
+        public StressData(StressType stressType)
+        {
+            StressType = stressType;
+            Number = (int)stressType;
+        }
     }
 
     public enum StressType
     {
-        RelaxedStressed,
+        RelaxedStressed = 1,
         MildlyTense,
         ModeratelyStressed,
         HighlyStressed,
