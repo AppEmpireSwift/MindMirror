@@ -15,10 +15,13 @@ namespace PractisesScreen
         [SerializeField] private CreatePracticeScreen _createPracticeScreen;
 
         private ScreenVisabilityHandler _screenVisabilityHandler;
+        private PracticeDataSaver _dataSaver;
+        private List<PracticeData> _practiceDataList = new List<PracticeData>();
 
         private void Awake()
         {
             _screenVisabilityHandler = GetComponent<ScreenVisabilityHandler>();
+            _dataSaver = new PracticeDataSaver();
         }
 
         private void OnEnable()
@@ -49,6 +52,7 @@ namespace PractisesScreen
 
         private void Start()
         {
+            LoadSavedPractices();
             _screenVisabilityHandler.DisableScreen();
         }
 
@@ -78,8 +82,65 @@ namespace PractisesScreen
         {
             Enable();
 
-            var availablePlane = _practicePlanes.FirstOrDefault(p => !p.IsActive);
+            _practiceDataList.Add(data);
+            SavePracticeData();
+
+            var availablePlane =
+                _practicePlanes.FirstOrDefault(p => !p.IsActive && !p.IsFilled);
             availablePlane?.Enable(data);
+        }
+
+        private void OnDataDeleted(PracticeData data)
+        {
+            _practiceDataList.RemoveAll(p =>
+                p.Title == data.Title && p.Type == data.Type &&
+                p.Minutes == data.Minutes && p.Seconds == data.Seconds);
+
+            SavePracticeData();
+
+            foreach (var plane in _practicePlanes)
+            {
+                if (plane.IsActive && IsSamePracticeData(plane.Data, data))
+                {
+                    plane.Disable();
+                    break;
+                }
+            }
+        }
+
+        private bool IsSamePracticeData(PracticeData a, PracticeData b)
+        {
+            return a.Title == b.Title && a.Type == b.Type &&
+                   a.Minutes == b.Minutes && a.Seconds == b.Seconds;
+        }
+
+        private void LoadSavedPractices()
+        {
+            _practiceDataList = _dataSaver.LoadPracticeData();
+
+            foreach (PracticeData practiceData in _practiceDataList)
+            {
+                _practicePlanes.FirstOrDefault(p => !p.IsFilled)
+                    ?.Enable(practiceData);
+            }
+        }
+
+        private void SavePracticeData()
+        {
+            _dataSaver.SavePracticeData(_practiceDataList);
+        }
+
+        private void OnApplicationQuit()
+        {
+            SavePracticeData();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause)
+            {
+                SavePracticeData();
+            }
         }
     }
 }

@@ -18,26 +18,25 @@ namespace PractisesScreen
         public event Action<PracticeData> OpenButtonClicked;
 
         public bool IsActive { get; private set; }
+        public bool IsFilled { get; private set; }
 
         private void OnEnable()
         {
             _openButton.onClick.AddListener(OnButtonClicked);
+
+            if (!string.IsNullOrEmpty(Data.Type) && !string.IsNullOrEmpty(Data.Title) && Data.Minutes > 0)
+            {
+                UpdateUIElements();
+                IsFilled = true;
+                return;
+            }
+
+            Disable();
         }
 
         private void OnDisable()
         {
             _openButton.onClick.RemoveListener(OnButtonClicked);
-        }
-
-        private void Start()
-        {
-            if (!string.IsNullOrEmpty(Data.Type) && !string.IsNullOrEmpty(Data.Title) && Data.Minutes > 0)
-            {
-                UpdateUIElements();
-                return;
-            }
-
-            Disable();
         }
 
         public void Enable(PracticeData data)

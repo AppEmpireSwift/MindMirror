@@ -13,7 +13,6 @@ namespace PhotoPicker
             if (photo != null)
             {
                 Texture2D texture = ByteArrayToTexture(photo, 2, 2);
-                Debug.Log(texture.width * texture.height * 4);
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2());
                 _image.sprite = sprite;
                 _image.enabled = true;

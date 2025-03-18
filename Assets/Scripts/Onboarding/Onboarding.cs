@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using MainScreen;
+using UnityEngine.Experimental.GlobalIllumination;
 
 namespace Onboarding
 {
@@ -11,8 +13,8 @@ namespace Onboarding
         [SerializeField] private Ease _enterEase = Ease.OutQuad;
 
         [SerializeField] private Ease _exitEase = Ease.InQuad;
-        //[SerializeField] private MainScreenController _mainScreenController;
-        //[SerializeField] private ScreenVisabilityHandler _screenVisabilityHandler;
+        [SerializeField] private MainScreenController _mainScreenController;
+        [SerializeField] private ScreenVisabilityHandler _screenVisabilityHandler;
 
         private int _currentIndex = 0;
         private CanvasGroup[] _canvasGroups;
@@ -32,12 +34,12 @@ namespace Onboarding
 
             if (PlayerPrefs.HasKey("Onboarding"))
             {
-                //_mainScreenController.Enable();
+                _mainScreenController.Enable();
                 gameObject.SetActive(false);
             }
             else
             {
-                // _screenVisabilityHandler.DisableScreen();
+                _screenVisabilityHandler.DisableScreen();
                 gameObject.SetActive(true);
                 ShowOnboarding();
             }
@@ -71,9 +73,17 @@ namespace Onboarding
             else
             {
                 PlayerPrefs.SetInt("Onboarding", 1);
-                //_mainScreenController.Enable();
+                _mainScreenController.Enable();
                 gameObject.SetActive(false);
             }
+        }
+
+        public void SkipOnboarding()
+        {
+            AnimateStepExit(_currentIndex);
+            PlayerPrefs.SetInt("Onboarding", 1);
+            _mainScreenController.Enable();
+            gameObject.SetActive(false);
         }
 
         private void AnimateStepEnter(int index)

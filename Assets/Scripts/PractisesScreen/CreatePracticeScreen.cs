@@ -173,6 +173,7 @@ namespace PractisesScreen
                 {
                     _backButton.transform.DOScale(Vector3.one, _animationDuration * 0.3f);
                     BackClicked?.Invoke();
+                    Disable();
                 });
         }
 
@@ -187,8 +188,9 @@ namespace PractisesScreen
                     .OnComplete(() => { _saveButton.transform.DOScale(Vector3.one, _animationDuration * 0.3f); });
 
                 PracticeData data = new PracticeData(_minutes, _seconds, _typeInput.text, _titleInput.text);
-        
+
                 DataSaved?.Invoke(data);
+                Disable();
             }
         }
 
